@@ -8,16 +8,16 @@ interface TransactionItemProps {
 
 const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
   const { type, hash, timestamp, etherscanUrl } = transaction;
-  
+
   const isRequest = type === 'request';
   const styles = {
     container: `p-4 rounded-lg border-l-4 ${
-      isRequest 
-        ? 'bg-orange-50 border-orange-500' 
+      isRequest
+        ? 'bg-orange-50 border-orange-500'
         : 'bg-green-50 border-green-500'
     }`,
     icon: isRequest ? 'text-orange-500' : 'text-green-500',
-    label: isRequest ? 'text-orange-700' : 'text-green-700',
+    label: isRequest ? 'text-orange-700' : 'text-green-700'
   };
 
   return (
@@ -26,7 +26,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
         {isRequest ? (
           <>
             <SendHorizontal size={16} className={styles.icon} />
-            <span className={`text-sm font-medium ${styles.label}`}>Request</span>
+            <span className={`text-sm font-medium ${styles.label}`}>
+              Request
+            </span>
           </>
         ) : (
           <>
@@ -56,3 +58,4 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
 };
 
 export default TransactionItem;
+
