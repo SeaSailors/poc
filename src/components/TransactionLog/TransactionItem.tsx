@@ -7,7 +7,7 @@ interface TransactionItemProps {
 }
 
 const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
-  const { type, hash, timestamp, etherscanUrl } = transaction;
+  const { type, hash, timestamp, nodePubkey, etherscanUrl } = transaction;
 
   const isRequest = type === 'request';
   const styles = {
@@ -27,7 +27,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
           <>
             <SendHorizontal size={16} className={styles.icon} />
             <span className={`text-sm font-medium ${styles.label}`}>
-              Request
+              Request to {nodePubkey}
             </span>
           </>
         ) : (

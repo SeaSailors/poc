@@ -78,6 +78,7 @@ function App() {
         hash: txHash,
         timestamp: new Date().toLocaleTimeString(),
         type: 'request',
+        nodePubkey: computeNodePubkey.substring(0, 20),
         etherscanUrl: `${defaultChain.blockExplorers.default.url}/tx/${txHash}`
       };
       setTransactions((prev) => [requestTransaction, ...prev]);

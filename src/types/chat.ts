@@ -6,12 +6,12 @@ export interface Message {
   timestamp: string;
 }
 
-export type TransactionType = "request" | "reply";
+export type TransactionType = 'request' | 'reply';
 
 export interface Transaction {
   hash: string;
   timestamp: string;
   type: TransactionType;
+  nodePubkey?: string;
   etherscanUrl?: string;
 }
-
