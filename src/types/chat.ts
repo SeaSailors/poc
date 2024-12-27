@@ -1,11 +1,12 @@
 export interface Message {
   id: number;
   text: string;
+  cipherText: string;
   isBot: boolean;
   timestamp: string;
 }
 
-export type TransactionType = 'request' | 'reply';
+export type TransactionType = "request" | "reply";
 
 export interface Transaction {
   hash: string;
@@ -13,3 +14,4 @@ export interface Transaction {
   type: TransactionType;
   etherscanUrl?: string;
 }
+

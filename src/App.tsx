@@ -1,33 +1,35 @@
-import React, { useState } from 'react';
-import Navigation from './components/Navigation';
-import ChatMessage from './components/ChatMessage';
-import ChatInput from './components/ChatInput';
-import TransactionLog from './components/TransactionLog/index';
-import { Message, Transaction } from './types/chat';
-import { WalletState } from './types/wallet';
-import { connectWallet, isMetaMaskInstalled } from './utils/wallet';
-import { getPromptReply, sendPrompt } from './utils/prompt';
-import { defaultChain } from './contracts/chain';
+import React, { useState } from "react";
+import Navigation from "./components/Navigation";
+import ChatMessage from "./components/ChatMessage";
+import ChatInput from "./components/ChatInput";
+import TransactionLog from "./components/TransactionLog/index";
+import { Message, Transaction } from "./types/chat";
+import { WalletState } from "./types/wallet";
+import { connectWallet, isMetaMaskInstalled } from "./utils/wallet";
+import { encryptPrompt, getPromptReply, sendPrompt } from "./utils/prompt";
+import { defaultChain } from "./contracts/chain";
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
       text: "Hello! I'm your Oneshot Assistant. How can I help you today?",
+      cipherText:
+        "Hello! I'm your Oneshot Assistant. How can I help you today?",
       isBot: true,
-      timestamp: new Date().toLocaleTimeString()
-    }
+      timestamp: new Date().toLocaleTimeString(),
+    },
   ]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [wallet, setWallet] = useState<WalletState>({
     address: null,
     isConnecting: false,
-    error: null
+    error: null,
   });
 
   const handleConnectWallet = async () => {
     if (!isMetaMaskInstalled()) {
-      window.open('https://metamask.io/download/', '_blank');
+      window.open("https://metamask.io/download/", "_blank");
       return;
     }
 
@@ -40,35 +42,43 @@ function App() {
       setWallet((prev) => ({
         ...prev,
         isConnecting: false,
-        error: error.message
+        error: error.message,
       }));
     }
   };
 
   const handleSendMessage = async (text: string) => {
     if (!wallet.address) {
-      alert('Please connect your wallet first');
+      alert("Please connect your wallet first");
       return;
     }
 
-    const newMessage: Message = {
-      id: messages.length + 1,
-      text,
-      isBot: false,
-      timestamp: new Date().toLocaleTimeString()
-    };
-
-    setMessages((prev) => [...prev, newMessage]);
-
     try {
+      const { reqSk, reqPubkey, computeNodePubkey, cipherText } =
+        await encryptPrompt(text);
+
+      const newMessage: Message = {
+        id: messages.length + 1,
+        text,
+        cipherText,
+        isBot: false,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setMessages((prev) => [...prev, newMessage]);
+
       // Send actual Ethereum transaction
-      const { txHash, taskId, reqSk } = await sendPrompt(text);
+      const { txHash, taskId } = await sendPrompt(
+        reqPubkey,
+        computeNodePubkey,
+        cipherText,
+      );
 
       const requestTransaction: Transaction = {
         hash: txHash,
         timestamp: new Date().toLocaleTimeString(),
-        type: 'request',
-        etherscanUrl: `${defaultChain.blockExplorers.default.url}/tx/${txHash}`
+        type: "request",
+        etherscanUrl: `${defaultChain.blockExplorers.default.url}/tx/${txHash}`,
       };
       setTransactions((prev) => [requestTransaction, ...prev]);
 
@@ -78,15 +88,16 @@ function App() {
       const botResponse: Message = {
         id: messages.length + 2,
         text: promptReply.output,
+        cipherText: promptReply.cipherText,
         isBot: true,
-        timestamp: new Date().toLocaleTimeString()
+        timestamp: new Date().toLocaleTimeString(),
       };
 
       const replyTransaction: Transaction = {
         hash: promptReply.txHash,
         timestamp: new Date().toLocaleTimeString(),
-        type: 'reply',
-        etherscanUrl: `${defaultChain.blockExplorers.default.url}/tx/${promptReply.txHash}`
+        type: "reply",
+        etherscanUrl: `${defaultChain.blockExplorers.default.url}/tx/${promptReply.txHash}`,
       };
 
       setMessages((prev) => [...prev, botResponse]);
@@ -109,6 +120,7 @@ function App() {
                     <ChatMessage
                       key={message.id}
                       message={message.text}
+                      cipherText={message.cipherText}
                       isBot={message.isBot}
                       timestamp={message.timestamp}
                     />
