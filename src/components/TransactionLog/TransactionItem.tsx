@@ -27,7 +27,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
           <>
             <SendHorizontal size={16} className={styles.icon} />
             <span className={`text-sm font-medium ${styles.label}`}>
-              Request to {nodePubkey}
+              Request to compute node {nodePubkey}
             </span>
           </>
         ) : (
