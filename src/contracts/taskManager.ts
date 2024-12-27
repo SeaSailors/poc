@@ -9,7 +9,7 @@ import {
 import { getSharedSecret } from '@noble/secp256k1';
 
 import { defaultChain } from './chain';
-import TaskManagerJSON from '../../../contracts/out/TaskManager.sol/TaskManager.json';
+import TaskManagerJSON from '../../abis/TaskManager.json';
 import { siv } from '@noble/ciphers/aes';
 import { sha256 } from '@noble/hashes/sha256';
 import { expand, extract } from '@noble/hashes/hkdf';

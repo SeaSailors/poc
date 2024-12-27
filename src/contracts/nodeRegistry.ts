@@ -2,7 +2,7 @@ import 'viem/window';
 import { createPublicClient, getContract, Hex, http } from 'viem';
 
 import { defaultChain } from './chain';
-import NodeRegistryJSON from '../../../contracts/out/NodeRegistry.sol/NodeRegistry.json';
+import NodeRegistryJSON from '../../abis/NodeRegistry.json';
 
 const NODE_REGISTRY_ADDRESS = defaultChain.contracts.nodeRegistry.address;
 const NODE_REGISTRY_ABI = NodeRegistryJSON.abi;
